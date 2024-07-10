@@ -1,7 +1,8 @@
 <script setup>
+import Base from "./components/01base.vue";
 </script>
 
 <template>
-  <div>1</div>
+  <Base/>
 </template>
 

@@ -402,6 +402,11 @@ source-map-js@^1.2.0:
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.0.tgz#16b809c162517b5b8c3e7dcd315a2a5c2612b2af"
   integrity sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==
 
+three@^0.148.0:
+  version "0.148.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.148.0.tgz#b6f62f9c84227f8d51c151bf17b67984ded8e4d7"
+  integrity sha512-8uzVV+qhTPi0bOFs/3te3RW6hb3urL8jYEl6irjCWo/l6sr8MPNMcClFev/MMYeIxr0gmDcoXTy/8LXh/LXkfw==
+
 vite@^5.3.1:
   version "5.3.3"
   resolved "https://registry.yarnpkg.com/vite/-/vite-5.3.3.tgz#5265b1f0a825b3b6564c2d07524777c83e3c04c2"
