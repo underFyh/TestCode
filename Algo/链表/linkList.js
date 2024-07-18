@@ -81,6 +81,7 @@ list.printList(); // 输出应为 1 -> 2 -> 4 -> 3 -> null
 // 1 - 2 - 3 - 4
 // 获取链表中点 不通过size属性
 function getMiddle(list, prev) {
+    // 利用fast指针每次比slow指针多走一步,只要fast走到了尾部节点，则slow走到了中点
     let fast = list.head;
     let slow = list.head;
     while (fast.next !== null) {
@@ -98,7 +99,6 @@ function getMiddle(list, prev) {
         }
         slow = slow.next;
     }
-
     // 中节点
     return slow;
 }
