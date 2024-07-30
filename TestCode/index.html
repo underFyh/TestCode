@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarter Crescent Moon</title>
+    <style>
+        .animated-line {
+            animation: dash 2s infinite linear;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 100; /* 动画结束时的偏移量 */
+            }
+        }
+    </style>
+</head>
+<body>
+<svg width="200" height="200">
+    <line x1="10" y1="10" x2="190" y2="10" stroke="black" stroke-width="2" class="animated-line"/>
+</svg>
+
+<script>
+    // i = 0  path=[1] 待执行pop
+    //      i = 0  path = [1]   continue
+    //      i = 1  path = [1,2] 待执行pop
+    //             i = 0 path = [1,2]    continue
+    //             i = 1 path = [1,2]    continue
+    //             i = 2 path = [1,2,3]  return 并执行pop path=[1,2]
+    //      i = 1  path = [1] 执行之前待执行的pop
+    //      i = 2  path = [1,3] 待执行pop
+    //             i = 0 path = [1,3]    continue
+    //             i = 1 path = [1,3,2]  return 并执行pop path=[1,3]
+    //             i = 2 path = [1,3]    continue
+    //      i = 2  path = [1] 执行之前待执行的pop
+    // i = 0 path=[] 执行之前待执行的pop
+    function print(nums) {
+        let result = [];
+        if (nums.length === 0) return result;
+
+        const back = (path) => {
+            if (path.length === nums.length) {
+                return result.push(Array.from(path));
+            }
+
+            for (let i = 0; i < nums.length; i++) {
+                if (path.includes(nums[i])) continue;
+                path.push(nums[i]);
+                back(path); // 这里内部执行return还是无法终止后续pop执行
+                path.pop();
+            }
+        }
+
+        back([]);
+        return result;
+    }
+
+    console.log(print([1, 2, 3]));
+
+
+    for (let i = 0; i < 6; i++) {
+        max3(i);
+        console.log(i);
+    }
+
+    function max3(num) {
+        if (num >= 3) return false
+    }
+
+
+    let initKye = "BCFVlNB0rPGwH1ta";
+    const key = crypto.enc.Utf8.parse(initKye);
+    function encrypt(phoneNumber) {
+        return crypto.AES.encrypt(phoneNumber, key, {
+            mode: crypto.mode.ECB,
+            padding: crypto.pad.Pkcs7
+        }).toString();
+    }
+</script>
+</body>
+</html>
