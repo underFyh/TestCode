@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>浏览器通知示例</title>
+</head>
+<body>
+<button id="notifyBtn">发送通知</button>
+<p id="p">发送通知</p>
+
+<script>
+    p.innerHTML = "亲，当前未在线，在线时间（9:30-17:00），您可复制以下关键词办理对应业务：\n\n剩余语音查询\n剩余流量查询\n流量包订购（低至1元1GB）\\n语音包订购（低至0.1元每分钟）\\n选靓号（888、666号段任选）\\n千兆宽带预约\\n套餐变更\\n宽带排障\\n已订业务查询\\n积分查询\\n服务密码\\n\\n若您有其他紧急的业务需求，可登录中国移动APP、微信搜索“贵州移动”小程序办理，也可致电10086人工咨询办理哦~"
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            console.log('页面已最小化或切换到其他标签页');
+        } else {
+            console.log('页面在前台');
+        }
+    });
+
+    document.getElementById("notifyBtn").addEventListener("click", () => {
+        // 请求通知权限
+        setInterval(() => {
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    // 创建并显示通知
+                    const notification = new Notification("通知标题", {
+                        body: "这是通知的内容",
+                        icon: "icon.png"
+                    });
+
+                    // 处理通知点击事件
+                    notification.onclick = () => {
+                        window.open("https://example.com");
+                    };
+                }
+                console.log(permission);
+            });
+        }, 3000);
+    });
+</script>
+</body>
+</html>

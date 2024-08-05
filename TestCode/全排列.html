@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+
+    function process(arr) {
+        let result = [];
+        if (arr.length === 0) {
+            return [""];
+        }
+        if (arr.length === 1) {
+            return [arr[0]];
+        }
+
+        for (let i = 0; i < arr.length; i++) {
+            let first = arr[i];
+            let leftArr = getLeft(arr, i);
+            let next = process(leftArr);
+            for (let j = 0; j < next.length; j++) {
+                let cur = next[j];
+                result.push(first + cur);
+            }
+        }
+        return result;
+    }
+
+    let arr = ["a", "b", "c"];
+
+    console.log(process(arr));
+
+
+    function getLeft(arr, index) {
+        let res = [];
+        for (let i = 0; i < arr.length; i++) {
+            if (i !== index) {
+                res.push(arr[i]);
+            }
+        }
+        return res;
+    }
+
+</script>
+</body>
+</html>
