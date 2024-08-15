@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>B</title>
+</head>
+<body>
+<h1 id="h1">123</h1>
+
+<script>
+    h1.onclick = send;
+    function send() {
+        console.log("发送");
+        window.parent.postMessage({
+            method: "getCurExternalChat",
+            callBackId: "120"
+        }, "*")
+    }
+
+
+    window.addEventListener("message", function(event) {
+        console.log("Message received from parent:", event.data);
+        alert("111")
+        // 处理接收到的消息
+        if (event.data.method === "openEnterpriseChat") {
+            console.log("Opening enterprise chat...");
+        }
+    });
+
+</script>
+</body>
+</html>

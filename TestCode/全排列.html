@@ -7,41 +7,39 @@
 <body>
 <script>
 
+    let arr = ["a", "b", "c"];
+
     function process(arr) {
         let result = [];
-        if (arr.length === 0) {
-            return [""];
-        }
-        if (arr.length === 1) {
-            return [arr[0]];
-        }
-
+        if (arr.length === 0) return [""];
+        // if (arr.length === 1) return [arr[0]];
         for (let i = 0; i < arr.length; i++) {
             let first = arr[i];
-            let leftArr = getLeft(arr, i);
-            let next = process(leftArr);
-            for (let j = 0; j < next.length; j++) {
-                let cur = next[j];
-                result.push(first + cur);
+            let next = filter(arr, i);
+            let nextStr = process(next);
+            for (let j = 0; j < nextStr.length; j++) {
+                result.push(first + nextStr[j])
             }
         }
         return result;
     }
 
-    let arr = ["a", "b", "c"];
-
     console.log(process(arr));
 
-
-    function getLeft(arr, index) {
+    function filter(arr, index) {
         let res = [];
-        for (let i = 0; i < arr.length; i++) {
-            if (i !== index) {
-                res.push(arr[i]);
-            }
+        for (let i = 0; i< arr.length; i++) {
+            if (i === index) continue;
+            res.push(arr[i]);
         }
         return res;
     }
+
+
+    let str = "ticket=$1$LZ73L.cC$qBT9ZQfdO2VDqEOWw7nZW/"
+    let str2 = "ticket=TICKET";
+
+    console.log(str2.replace("ticket=TICKET", str));
 
 </script>
 </body>

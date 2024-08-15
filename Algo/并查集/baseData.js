@@ -100,10 +100,15 @@ class UnionSet {
     }
 }
 
-let unionSet = new UnionSet(["a", "b", "c", "d", "e"]);
+// let unionSet = new UnionSet(["a", "b", "c", "d", "e"]);
 
-unionSet.union("b", "c");
-unionSet.union("a", "b");
+// unionSet.union("b", "c");
+// unionSet.union("a", "b");
 
-console.log(unionSet.isSameSet("a", "c"));
-console.log(unionSet);
+// console.log(unionSet.isSameSet("a", "c"));
+// console.log(unionSet);
+
+
+module.exports = {
+    UnionSet
+}
