@@ -19,45 +19,50 @@ let graph = createGraph(matrix);
  * @param node 需要求的点
  */
 function dijkstra1(node) {
-    // 1. 初始化登记表，默认只有自己，然后每条边进行考察，解锁出能到的点
+    // 1. 初始化登记表，默认只有自己，然后每条边进行考察，解锁出能到的点，表中没有登记的说明目前不可达
     let distance = new Map();
+    let touchedNode = new Set();
     distance.set(node, 0);
-
-    // 2. 开始考察节点的每条边(宽度优先遍历)
-    let queue = [node];
-    let set = new Set(); // 防止环状重复
-    set.add(node);
-
-    while (queue.length > 0) {
-        // 当前考察的点
-        let node = queue.pop();
-        let edges = [...node.edges];
+    let minNode = node;
+    while (minNode !== null) {
+        let edges = [...minNode.edges];
         for (let i = 0; i < edges.length; i++) {
             let edge = edges[i];
-            // 没有记录之前能到的点登记到表中
-            if (!distance.has(edge.to)) {
-                distance.set(edge.to, edge.weight);
+            // 需要登记的点
+            let toNode = edge.to;
+            // 没有登记过去的点距离则进行登记
+            if (!distance.has(toNode)) {
+                distance.set(toNode, edge.weight);
             } else {
-                // 之前登记过，对比距离
-                let oldDistance = distance.get(edge.to);
-                let newDistance = edge.weight + distance.get(edge.from);
+                // 登记过获取旧距离和新距离进行比较
+                let oldDistance = distance.get(toNode);
+                let newDistance = distance.get(edge.from) + edge.weight;
                 if (newDistance < oldDistance) {
-                    distance.set(edge.to, newDistance);
+                    distance.set(toNode, newDistance);
                 }
             }
         }
-        // 所有直接邻居入队列进行下次考察
-        for (let i = 0; i < node.next.length; i++) {
-            let nextNode = node.next[i];
-            if (!set.has(nextNode)) {
-                queue.unshift(nextNode);
-                set.add(nextNode);
-            }
-        }
+        touchedNode.add(minNode);
+        minNode = findMinNode(distance, touchedNode);
     }
 
 
     console.dir(distance, {depth: 1});
+
+    // 根据距离表和已访问的节点来获取剩余最小点（可用加强堆优化）
+    function findMinNode(distanceMap, touchedNode) {
+        // 根据distanceMap中的value选择当前表中最短路径
+        let minNode = null;
+        let minValue = Infinity;
+        for (let [key, value] of distanceMap) {
+            if (value < minValue && !touchedNode.has(key)) {
+                minValue = value;
+                minNode = key;
+            }
+        }
+        return minNode;
+    }
 }
 
+// { a->0, b->1, c->3, d->2, e->4 }
 dijkstra1(graph.nodes.get("a"));
