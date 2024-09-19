@@ -1,90 +1,67 @@
+const {generateRandomArray, genRange} = require("../utils/array");
+
 let arr = [1, 1, 1];
 
 function f(arr, aim) {
-    if (aim < 0 || arr.length < 0) return 0;
     return process(arr, aim, 0);
 }
+function process(arr, rest, index) {
+    if (rest < 0) return 0; // 说明不满足
+    // if (rest === 0) return 1;  // 也可以不要
+    // 如果越界了并且剩余目标为0，则说明满足
+    if (index === arr.length) return rest === 0 ? 1 : 0;
 
-function f1(arr, aim) {
-    if (aim < 0 || arr.length < 0) return 0;
-    return process2(arr, 0, aim);
-}
-
-
-/**
- *
- * @param arr
- * @param aim
- * @param index 从第几项开始选择
- * @return {number}
- */
-function process(arr, aim, index) {
-    console.log(index, aim);
-    if (aim < 0 || index === arr.length) return 0;
-    if (aim === 0) return 1;
-
-    let cur = arr[index];
+    // 当前项选或者不选
     let total = 0;
-
-    // 要
-    // for (let i = index + 1; i < arr.length; i++) {
-    //     total += process(arr, aim - cur, i);
-    // }
-    total += process(arr, aim - cur, index + 1)
-    total += process(arr, aim, index + 1)
-
-    // 不要
-    // for (let i = index + 1; i < arr.length; i++) {
-    //     total += process(arr, aim, i);
-    // }
-
+    // 当前项不要
+    total += process(arr, rest, index + 1);
+    // 当前项要
+    total += process(arr, rest - arr[index], index + 1);
     return total;
 }
 
-function process2(arr, index, rest) {
-    if (rest < 0) {
-        return 0;
-    }
-    if (index === arr.length) {
-        return rest === 0 ? 1 : 0;
-    }
-    return process2(arr, index + 1, rest) + process2(arr, index + 1, rest - arr[index]);
-}
-
-// console.log(f([3, 3, 1], 2));
-
-
-// aim 0 - aim
-// index 0 - arr.length;
+// console.log(f(arr, 2));
 function dp(arr, aim) {
+    // 1. 参数变化范围,根据这个范围创建dp表
+    // index 为 0 - arr.length 递归条件会到0
+    // aim 为 0 - aim  递归条件也回到0
     let N = arr.length;
-    let dp = Array.from({length: N + 1}, () => new Array(aim + 1).fill(-1));
+    let dp = Array.from({
+        length: N + 1
+    }, () => Array.from({length: aim + 1}, () => 0));
 
-    // 1. 基础
-    for (let i = 0; i <= N - 1; i++) {
+    // 1. 递归基础条件分析
+    dp[N][0] = 1;
+    for (let i = N; i <= 0; i++) {
         dp[i][0] = 1;
     }
-    dp[N] = new Array(aim + 1).fill(0);
 
-    // 2. 依赖 [3][0] = 1 cur = 1 求出[3][1]
-    for (let i = N - 1; i >= 0; i--) {
-        let cur = arr[i];
-        for (let j = 1; j <= aim; j++) {
-            // dp[i][j] = dp[]
+    for (let index = N - 1; index >= 0; index--) {
+        for (let rest = 0; rest <= aim; rest++) {
+            // 如果rest - arr[index] >= 0 说明不满足条件 if (rest < 0) return 0;
+            dp[index][rest] = dp[index + 1][rest] + (rest - arr[index] >= 0 && dp[index + 1][rest - arr[index]]);
         }
     }
 
-    console.log(dp);
-
+    // 2. 根据递归入参返回返回值
     return dp[0][aim];
 }
+// console.log(dp(arr, 2));
 
-// console.log(dp([1, 1, 1], 2));
 
+function test() {
+    let times = 10000;
+    for (let i = 0; i <= times; i++) {
+        let arr = generateRandomArray(genRange(1, 20), 1, 1000);
+        let aim = genRange(1, 100);
+        let ans1 = f(arr, aim);
+        let ans2 = dp(arr, aim);
 
-let a = [1, 1, 1];
-let aim = 2;
-
-console.log(f(a, aim), "res");
-// console.log(f1(a, aim));
-// console.log(f(a, aim) === f1(a, aim));
+        if (ans1 !== ans2) {
+            console.log("error");
+            break;
+        }
+    }
+    console.log("结束");
+}
+test();
