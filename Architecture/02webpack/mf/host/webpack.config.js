@@ -9,10 +9,10 @@ module.exports = {
     devtool: "source-map",
     output: {
         filename: "bounder.js",
-        publicPath: "http://localhost:3333/"
+        publicPath: "http://localhost:3355/"
     },
     devServer: {
-        port: 3333
+        port: 3355
     },
     module: {
         rules: [
@@ -40,10 +40,10 @@ module.exports = {
             template: path.resolve(__dirname, './index.html'),
         }),
         new ModuleFederationPlugin({
-            filename: "myRemoteEntry.js",
-            name:"remote1",
-            exposes: {
-                "./NewList": "./src/NewList.jsx",
+            name: "host",
+            remotes: {
+                // 引入远程模块名称和地址
+                remote1: "remote1@http://localhost:3333/myRemoteEntry.js"
             }
         })
     ]
