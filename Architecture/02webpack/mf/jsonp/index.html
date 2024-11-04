@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+script标签没有同源限制
+<script>
+    function getMsg(msg) {
+        console.log(msg);
+    }
+</script>
+<script src="http://localhost:3000/data?callback=getMsg"></script>
+</body>
+</html>
