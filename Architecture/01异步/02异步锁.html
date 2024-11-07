@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<!--<script>-->
+<!--    class DataManager {-->
+<!--        constructor() {-->
+<!--            // 主数据数组-->
+<!--            this.dataArray = [];-->
+<!--            // 使用Map来建立id到索引的映射，提高查找效率-->
+<!--            this.idIndexMap = new Map();-->
+<!--            // 用于数据操作的锁-->
+<!--            this.lock = Promise.resolve();-->
+<!--        }-->
+
+<!--        // 异步锁包装器-->
+<!--        async withLock(operation) {-->
+<!--            const previousLock = this.lock;-->
+<!--            let resolve;-->
+<!--            this.lock = new Promise(r => resolve = r);-->
+<!--            await previousLock;-->
+<!--            try {-->
+<!--                return await operation();-->
+<!--            } finally {-->
+<!--                resolve();-->
+<!--            }-->
+<!--        }-->
+
+<!--        // 处理接口A的数据（更新操作）-->
+<!--        async handleSocketA(data) {-->
+<!--            await this.withLock(async () => {-->
+<!--                const { id, ...rest } = data;-->
+<!--                const index = this.idIndexMap.get(id);-->
+
+<!--                if (index !== undefined) {-->
+<!--                    // 更新现有数据-->
+<!--                    this.dataArray[index] = { id, ...rest };-->
+<!--                } else {-->
+<!--                    // 如果找不到，作为新数据添加-->
+<!--                    const newIndex = this.dataArray.length;-->
+<!--                    this.dataArray.push({ id, ...rest });-->
+<!--                    this.idIndexMap.set(id, newIndex);-->
+<!--                }-->
+<!--            });-->
+<!--        }-->
+
+<!--        // 处理接口B的数据（添加操作）-->
+<!--        async handleSocketB(data) {-->
+<!--            await this.withLock(async () => {-->
+<!--                const newIndex = this.dataArray.length;-->
+<!--                if (data.id) {-->
+<!--                    this.idIndexMap.set(data.id, newIndex);-->
+<!--                }-->
+<!--                this.dataArray.push(data);-->
+<!--            });-->
+<!--        }-->
+
+<!--        // 获取当前数据快照-->
+<!--        async getSnapshot() {-->
+<!--            return [...this.dataArray];-->
+<!--        }-->
+<!--    }-->
+
+<!--    // 使用示例-->
+<!--    const dataManager = new DataManager();-->
+
+<!--    // 模拟Socket A的数据处理-->
+<!--    const socketA = {-->
+<!--        onMessage: (data) => {-->
+<!--            dataManager.handleSocketA(data).catch(console.error);-->
+<!--        }-->
+<!--    };-->
+
+<!--    // 模拟Socket B的数据处理-->
+<!--    const socketB = {-->
+<!--        onMessage: (data) => {-->
+<!--            dataManager.handleSocketB(data).catch(console.error);-->
+<!--        }-->
+<!--    };-->
+<!--    let run = []-->
+
+<!--    // 使用示例-->
+<!--    async function example() {-->
+<!--        // // 模拟接收数据-->
+<!--        // socketB.onMessage({ id: 1, value: "test1" });-->
+<!--        // socketA.onMessage({ id: 1, value: "updated1" });-->
+<!--        // socketB.onMessage({ id: 2, value: "test2" });-->
+<!--        //-->
+<!--        // // 获取数据快照-->
+<!--        // const snapshot = await dataManager.getSnapshot();-->
+<!--        // console.log(snapshot);-->
+<!--        let times = 0;-->
+<!--        let a = setInterval(() => {-->
+<!--            let r = Math.floor(Math.random() * 500) + 1;-->
+<!--            console.log(r);-->
+<!--            run.push("a");-->
+<!--            socketA.onMessage({ id: r, handle: 'a' });-->
+<!--            times++;-->
+<!--            if (times >= 100) {-->
+<!--                clearInterval(a);-->
+<!--            }-->
+<!--        }, 100);-->
+<!--        let b = setInterval(() => {-->
+<!--            let r = Math.floor(Math.random() * 500) + 1;-->
+<!--            run.push("b");-->
+<!--            socketB.onMessage({ id: r, handle: 'b' });-->
+<!--            times++;-->
+<!--            if (times >= 100) {-->
+<!--                clearInterval(b);-->
+<!--            }-->
+<!--        }, 100);-->
+
+<!--        console.log(times);-->
+<!--    }-->
+
+<!--    example();-->
+
+
+<!--    console.log(dataManager);-->
+<!--    console.log(run);-->
+<!--    setTimeout(() => {-->
+<!--        console.log(JSON.stringify(dataManager.dataArray.map(i => i.handle)) === JSON.stringify(run));-->
+<!--        console.log(JSON.stringify(run));-->
+<!--    }, 5000)-->
+
+
+<!--    let resolve;-->
+<!--    new Promise(r => resolve = r);-->
+<!--    console.log(typeof resolve);-->
+<!--    console.log(resolve());-->
+<!--</script>-->
+<script>
+    // 多个任务异步处理同一个数据源
+    class DataManager {
+        constructor() {
+            this.data = [];
+            this.writeLock = Promise.resolve();
+            this.index = 0;
+        }
+
+        async withLock(operation) {
+            // 1. 获取上一个锁
+            let prevWriteLock = this.writeLock;
+            // 2. 创建新锁,等待自己的逻辑执行完成后才能
+            let resolve;
+            this.writeLock = new Promise(r => resolve = r);
+            // 3. 等待上一个锁执行完成后才能执行修改操作
+            await prevWriteLock
+            // 4. 执行完毕后再将
+            try {
+                return await operation();
+            } finally {
+                resolve();
+            }
+        }
+
+        async pushA(data) {
+            await this.withLock(async () => {
+                this.data[this.index] = data;
+                this.index++;
+            });
+        }
+
+        async pushB(data) {
+            await this.withLock(async () => {
+                this.data[this.index] = data;
+                this.index++;
+            });
+        }
+    }
+
+
+    let manager = new DataManager()
+
+    function test() {
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                // manager.pushA("a")
+                console.log("1");
+            }, 3);
+            setTimeout(() => {
+                // manager.pushB("b")
+                console.log("2");
+            }, 3);
+        }
+    }
+
+    // test();
+
+
+
+</script>
+</body>
+</html>
