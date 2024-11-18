@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="d"></div>
+
+<script>
+    // 模拟用户点击按钮后的数据获取和UI更新场景
+    function fetchUserData(userId) {
+        // 宏任务：ajax请求
+        setTimeout(() => {
+            console.log('1. 获取用户数据');
+
+            // 微任务：处理数据
+            Promise.resolve().then(() => {
+                console.log('2. 处理用户数据');
+
+                // 微任务的微任务：更新状态
+                Promise.resolve().then(() => {
+                    console.log('3. 更新应用状态');
+                });
+            });
+
+            // 宏任务：更新UI
+            setTimeout(() => {
+                console.log('5. 更新UI显示');
+            }, 0);
+
+            console.log('4. 数据获取完成');
+        }, 0);
+    }
+
+    // 模拟用户交互
+    console.log('开始处理用户请求');
+    fetchUserData(123);
+    Promise.resolve().then(() => {
+        console.log('验证用户权限');
+    });
+
+    /* 输出顺序：
+    开始处理用户请求
+    验证用户权限
+    1. 获取用户数据
+    2. 处理用户数据
+    3. 更新应用状态
+    4. 数据获取完成
+    5. 更新UI显示
+    */
+</script>
+</body>
+</html>
